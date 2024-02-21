@@ -42,6 +42,3 @@ jobs:
         run: railway up --service nimble-scissors
         env:
           RAILWAY_TOKEN: ${{secrets.RAILWAY_TOKEN}}
-
-          
-          
