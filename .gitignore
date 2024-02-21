@@ -4,3 +4,4 @@ __test__
 jest.config.js
 .prettierrc
 node_modules
+.eslintrc.js
