@@ -1,5 +1,4 @@
-node_modules
 build
 .env
-__test__
-jest.config.js
+.gitgub
+node_modules
