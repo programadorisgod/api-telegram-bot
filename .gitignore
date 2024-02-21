@@ -3,3 +3,4 @@ build
 .env
 __test__
 jest.config.js
+.prettierrc
