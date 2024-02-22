@@ -38,6 +38,7 @@ USER node
 ENV DB_URI=
 
 COPY --from=build /project/node_modules ./node_modules
+
 COPY --from=build /project/build ./build
 
 CMD [ "dumb-init", "node", "build/index.js" ]
