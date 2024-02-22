@@ -41,4 +41,6 @@ COPY --from=build /project/node_modules ./node_modules
 
 COPY --from=build /project/build ./build
 
+EXPOSE $PORT
+
 CMD [ "dumb-init", "node", "build/index.js" ]
