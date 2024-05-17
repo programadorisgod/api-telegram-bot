@@ -1,9 +1,14 @@
 import swaggerUi from 'swagger-ui-express'
 import { type Request, type Response } from 'express'
+
 import swaggerJSDoc, {
   type OAS3Definition,
   type OAS3Options
 } from 'swagger-jsdoc'
+
+import { config } from 'dotenv'
+
+config()
 
 const swaggerDefinition: OAS3Definition = {
   openapi: '3.0.0',
@@ -69,5 +74,5 @@ export const swaggerDocs = (app: any, port: number | string): void => {
     res.setHeader('Content-Type', 'application/json')
     res.send(swgagerSpec)
   })
-  console.log(` 📑 Swagger running on http://localhost:${port}/api/v1/docs`)
+  console.log(` 📑 📑Swagger running on http://localhost:${port}/api/v1/docs`)
 }
