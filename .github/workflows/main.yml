@@ -39,7 +39,7 @@ jobs:
         run: npm i -g @railway/cli
 
       - name: Deploy to railway
-        run: railway up --service nimble-scissors
+        run: railway up --service stunning-presence
         env:
           RAILWAY_TOKEN: ${{secrets.RAILWAY_TOKEN}}
           
