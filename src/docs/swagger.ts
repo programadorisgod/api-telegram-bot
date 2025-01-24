@@ -65,12 +65,21 @@ const swaggerDefinition: OAS3Definition = {
     }
   }
 }
+
+const isProduction = process.env.NODE_ENV === 'production'
+const apis = isProduction
+  ? [
+      `${process.cwd()}/build/routes/chat/*.js`,
+      `${process.cwd()}/build/routes/command/*.js`
+    ]
+  : [
+      `${process.cwd()}/src/routes/chat/*.ts`,
+      `${process.cwd()}/src/routes/command/*.ts`
+    ]
+
 const swaggerOptions: OAS3Options = {
   swaggerDefinition,
-  apis: [
-    `${process.cwd()}/src/routes/chat/*.ts`,
-    `${process.cwd()}/src/routes/command/*.ts`
-  ]
+  apis: apis
 }
 
 const swgagerSpec = swaggerJSDoc(swaggerOptions)
