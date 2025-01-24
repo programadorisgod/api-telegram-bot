@@ -21,6 +21,10 @@ const swaggerDefinition: OAS3Definition = {
     {
       url: `http://localhost:${process.env.PORT}`,
       description: 'Development server'
+    },
+    {
+      url: `${process.env.URL_PRODUCTION}`,
+      description: 'Production server'
     }
   ],
   components: {
