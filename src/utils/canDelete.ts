@@ -5,9 +5,7 @@ export default function canDelete(
   command?: ICommand,
   username?: string
 ): boolean {
-  if (role === 'admin') {
-    return true
-  }
+  if (role === 'admin') return true
 
   if (
     role !== 'admin' &&
@@ -17,5 +15,6 @@ export default function canDelete(
   ) {
     return true
   }
+
   return false
 }

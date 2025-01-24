@@ -8,7 +8,7 @@ import { connectionDatabase } from '@config/connectionDatabase'
 import RouterCommand from '@routes/command/command'
 import { swaggerDocs as v1SwaggerDocs } from './docs/swagger'
 
-const PORT = process.env.PORT ?? 3000
+const PORT = process.env.PORT || process.argv[3] || 3000
 
 const app = express()
 
@@ -19,7 +19,7 @@ app.use(urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
 app.get('/', (_, res) => {
-  res.send('Hello World!!')
+  res.send('its working!')
 })
 
 app.use(routerChat)

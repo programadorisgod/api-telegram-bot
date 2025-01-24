@@ -43,7 +43,7 @@ export default RouterCommand
 /**
  * GET /api/v1/command/:id_chat/:name_command
  * @swagger
- * /command/{id_chat}/{name_command}:
+ * /api/v1/command/{id_chat}/{name_command}:
  *  get:
  *   tags:
  *    - Command
@@ -70,18 +70,30 @@ export default RouterCommand
  *         schema:
  *           $ref: '#/components/schemas/command'
  *         example:
- *           command: start
- *           description: " "
- *           creator: " "
- *           _id: "65b416a47a5259e3ab6b2411"
+ *          {
+ *             command: {
+ *            "type": "text",
+ *            "name": "all",
+ *            "command": "  @Midudev @El_Bermu @Manuel",
+ *            "description": " ",
+ *            "creator": " ",
+ *            "_id": "6625a37526df41c"
+ *            }
+ *         }
  *    404:
- *     description: Command not found
+ *       description: Returns object with property "error" and value "Command not Found"
+ *       content:
+ *        application/json:
+ *         example:
+ *          {
+ *            "error": "Command not Found"
+ *          }
  */
 
 /**
  * POST /api/v1/command/:id_chat
  * @swagger
- * /command/{id_chat}:
+ * /api/v1/command/{id_chat}:
  *   post:
  *     tags:
  *       - Command
@@ -114,68 +126,39 @@ export default RouterCommand
  *             schema:
  *               $ref: '#/components/schemas/chat'
  *             example:
- *               chatId: 123456
- *               list:
- *                 - type: text
- *                   name: start
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2411"
- *                 - type: text
- *                   name: help
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2412"
- *                 - type: any
- *                   name: purge
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2413"
- *                 - type: text
- *                   name: alias
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2414"
- *                 - type: text
- *                   name: remove
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2415"
- *                 - type: text
- *                   name: risa
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2416"
- *                 - type: text
- *                   name: all
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2417"
- *                 - type: text
- *                   name: tr
- *                   command: " "
- *                   description: " "
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2418"
+ *               {
+ *                   "message": "Command Created"
+ *               }
  *       404:
- *         description: Command not found
+ *         description: Chat not found
+ *         content:
+ *          application/json:
+ *           example:
+ *              {
+ *                 "error": "Chat not found"
+ *              }
  *       409:
  *         description: Command already exists
+ *         content:
+ *          application/json:
+ *            example:
+ *                 {
+ *                     "error": "The command already exists"
+ *                 }
  *       500:
- *         description: Internal server error
+ *         description: Error to create chat
+ *         content:
+ *          application/json:
+ *            example:
+ *              {
+ *                 "error": "Error to create chat"
+ *              }
  */
 
 /**
  * PUT /api/v1/command/:id_chat
  * @swagger
- * /command/{id_chat}:
+ * /api/v1/command/{id_chat}:
  *   put:
  *     tags:
  *       - Command
@@ -196,7 +179,7 @@ export default RouterCommand
  *             $ref: '#/components/schemas/command'
  *           example:
  *             name: "start"
- *             description: "editada"
+ *             description: "new description"
  *     responses:
  *       200:
  *         description: Returns the chat with the command edited.
@@ -205,24 +188,46 @@ export default RouterCommand
  *             schema:
  *               $ref: '#/components/schemas/chat'
  *             example:
- *               chatId: 123456
- *               list:
- *                 - type: text
- *                   name: start
- *                   command: " "
- *                   description: "editada"
- *                   creator: " "
- *                   _id: "65b416a47a5259e3ab6b2411"
+ *                   {
+ *                     "chat": {
+ *                       "_id": "65cf77a40b5fe876a63330ac",
+ *                       "chatId": 23235,
+ *                       "list": [
+ *                         {
+ *                           "type": "text",
+ *                           "name": "all",
+ *                           "command": "perez pepito pepitox",
+ *                           "description": "perez pepito pepitox iwi",
+ *                           "creator": " ",
+ *                           "_id": "65cf77a40b5fe876a63330b3"
+ *                         }
+ *                       ],
+ *                       "__v": 10
+ *                     }
+ *                   }
  *       404:
  *         description: Command not found or chat not found
+ *         content:
+ *          application/json:
+ *           example:
+ *              {
+ *                 "error": "Command not found"
+ *              }
  *       500:
  *         description: Internal server error
+ *         content:
+ *            application/json:
+ *             example:
+ *              {
+ *                "error": "Internal server error"
+ *             }
+ *
  */
 
 /**
  * PUT /api/v1/command/:id_chat/:name/:username
  * @swagger
- * /command/{id_chat}/{name}/{username}:
+ * /api/v1/command/{id_chat}/{name}/{username}:
  *   put:
  *     tags:
  *       - Command
@@ -258,15 +263,36 @@ export default RouterCommand
  *               message: username added
  *       404:
  *         description: Chat not found
+ *         content:
+ *          application/json:
+ *           example:
+ *             {
+ *                "error": "Chat not found"
+ *             }
  *       403:
  *         description: Command not allowed
+ *         content:
+ *           application/json:
+ *            example:
+ *             {
+ *              "error": "Command not allowed"
+ *             }
+ *
  *       400:
  *         description: Command not valid or username not added
+ *         content:
+ *            application/json:
+ *              example:
+ *               {
+ *                 "error": "Command not valid or username not added"
+ *               }
+ *
+ *
  */
 /**
  * DELETE /api/v1/command/:id_chat/:username/:role
  * @swagger
- * /command/{id_chat}/{username}/{role}:
+ * /api/v1/command/{id_chat}/{username}/{role}:
  *   delete:
  *     tags:
  *       - Command
@@ -305,9 +331,31 @@ export default RouterCommand
  *         content:
  *           application/json:
  *             example:
- *               message: "command deleted"
+ *               message: "Command deleted"
  *       404:
  *         description: Command not found or chat not found
+ *         content:
+ *           application/json:
+ *             example:
+ *              {
+ *               "error": "Command not found or Chat not found"
+ *             }
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *            example:
+ *             {
+ *             "error": "Internal server error"
+ *            }
+ *
+ *       403:
+ *        description: User not allowed
+ *        content:
+ *         application/json:
+ *          example:
+ *            {
+ *               "error": "You dont have authorization to delete the command: commandName"
+ *            }
+ *
  */
