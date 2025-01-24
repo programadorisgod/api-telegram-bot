@@ -81,7 +81,6 @@ const swaggerOptions: OAS3Options = {
   swaggerDefinition,
   apis: apis
 }
-console.log(apis)
 
 const swgagerSpec = swaggerJSDoc(swaggerOptions)
 
