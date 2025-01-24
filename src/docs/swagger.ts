@@ -67,7 +67,10 @@ const swaggerDefinition: OAS3Definition = {
 }
 const swaggerOptions: OAS3Options = {
   swaggerDefinition,
-  apis: ['./src/routes/chat/*.ts', './src/routes/command/*.ts']
+  apis: [
+    `${process.cwd()}/src/routes/chat/*.ts`,
+    `${process.cwd()}/src/routes/command/*.ts`
+  ]
 }
 
 const swgagerSpec = swaggerJSDoc(swaggerOptions)
