@@ -7,6 +7,7 @@ import routerChat from '@routes/chat/chat'
 import { connectionDatabase } from '@config/connectionDatabase'
 import RouterCommand from '@routes/command/command'
 import { swaggerDocs as v1SwaggerDocs } from './docs/swagger'
+import { logger } from '@utils/logger'
 
 const PORT = process.env.PORT || process.argv[3] || 3000
 
@@ -31,8 +32,13 @@ void findPort(PORT).then((port) => {
     if (process.env.NODE_ENV === 'development') {
       console.log(`Server running on port http://localhost:${port}`)
     }
-
     v1SwaggerDocs(app, port)
+  })
+})
+
+process.on('uncaughtException', (err) => {
+  logger.error(`Uncaught Exception: ${err.message}`, {
+    stack: err.stack
   })
 })
 

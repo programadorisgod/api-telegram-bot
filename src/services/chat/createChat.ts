@@ -9,7 +9,7 @@ const findChatById = async (id: string): Promise<IChat | Error> => {
   const chat: IChat | null = await Chat.findOne({ chatId: id })
 
   if (chat === null || chat === undefined) {
-    throw new CustomError(404, 'Chat not found')
+    return new CustomError(404, 'Chat not found')
   }
 
   return chat

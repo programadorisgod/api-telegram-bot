@@ -14,9 +14,9 @@ class CustomError extends Error {
 
 const HandleError = async (
   error: Error | CustomError | unknown,
-  res: Response
+  res: Response,
+  message?: string
 ): Promise<void> => {
-
   if (error instanceof ZodError) {
     res
       .status(400)
@@ -29,8 +29,9 @@ const HandleError = async (
     return
   }
 
-  res.status(500).json({ error: 'Internal server error' })
-  
+  res
+    .status(500)
+    .json({ error: `${message ? message : 'Internal server error'}` })
 }
 
 export { CustomError, HandleError }

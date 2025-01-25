@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express'
 import { createChat, findChatById } from '@services/chat/createChat'
 import { HandleError } from '@utils/httpError'
 import { type IChat } from '@interfaces/chat.interface'
+import { logger } from '@utils/logger'
 
 const createChatBot = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -11,9 +12,12 @@ const createChatBot = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({ chatCreated })
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      await HandleError(error, res)
-    }
+    logger.error(`Error catch in createChatBot: ${error}`, {
+      stack: error instanceof Error ? error.stack : null,
+      path: req.originalUrl,
+      method: req.method
+    })
+    await HandleError(error, res, 'Error to create chat, try again')
   }
 }
 
@@ -25,9 +29,12 @@ const findChatByIdBot = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json(chat)
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      await HandleError(error, res)
-    }
+    logger.error(`Error catch in findChatByIdBot: ${error}`, {
+      stack: error instanceof Error ? error.stack : null,
+      path: req.originalUrl,
+      method: req.method
+    })
+    await HandleError(error, res, 'Error to find chat')
   }
 }
 

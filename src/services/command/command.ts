@@ -36,9 +36,7 @@ const addCommand = async (
   try {
     const chat: IChat | Error = await findChatById(id)
 
-    if (chat instanceof Error) {
-      return Failure<Error>(chat)
-    }
+    if (chat instanceof Error) return Failure<Error>(chat)
 
     const findCommand: ICommand | undefined = chat.list.find(
       (c: ICommand) => c.name === command.name
@@ -132,17 +130,17 @@ const editCommandAll = async (
     (u: string) => u === username
   )
 
-  if (userFind === -1) {
-    usersCommandAll.push(username)
-
-    command.command = usersCommandAll.join(' ')
-
-    await chat?.save()
-
-    return Success<IResponse>({ message: 'username added' })
+  if (userFind !== -1) {
+    return Failure<CustomError>(new CustomError(400, 'username not added'))
   }
 
-  return Failure<CustomError>(new CustomError(400, 'username not added'))
+  usersCommandAll.push(username)
+
+  command.command = usersCommandAll.join(' ')
+
+  await chat?.save()
+
+  return Success<IResponse>({ message: 'username added' })
 }
 
 const deleteCommand = async (
@@ -163,33 +161,24 @@ const deleteCommand = async (
     return Failure<CustomError>(new CustomError(404, 'Command not found'))
   }
 
-  if (canDelete(role)) {
-    const commandFilter: Array<ICommand> = chat.list.filter(
-      (command: ICommand) => command.name !== name
+  if (!canDelete(role, command, username)) {
+    return Failure<CustomError>(
+      new CustomError(
+        403,
+        `You dont have authorization to delete the command: ${name}`
+      )
     )
-
-    chat.list = commandFilter
-
-    await chat.save()
-
-    return Success<IResponse>({ message: 'Command deleted' })
   }
 
-  if (canDelete(role, command, username)) {
-    const commandFilter: Array<ICommand> = chat.list.filter(
-      (command: ICommand) => command.name !== name
-    )
-    chat.list = commandFilter
-    await chat.save()
-    return Success<IResponse>({ message: 'Command deleted' })
-  }
-
-  return Failure<CustomError>(
-    new CustomError(
-      403,
-      `You dont have authorization to delete the command: ${name}`
-    )
+  const UpdateList: Array<ICommand> = chat.list.filter(
+    (command: ICommand) => command.name !== name
   )
+
+  chat.list = UpdateList
+
+  await chat.save()
+
+  return Success<IResponse>({ message: 'Command deleted' })
 }
 
 export {

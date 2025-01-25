@@ -10,9 +10,11 @@ import {
   getCommandByName
 } from '@services/command/command'
 import { HandleError } from '@utils/httpError'
+import { logger } from '@utils/logger'
 import { ResultResponse } from '@utils/result'
 
 import { type Request, type Response } from 'express'
+import { MongooseError } from 'mongoose'
 
 type Params = {
   id_chat: string
@@ -46,6 +48,17 @@ const getCommandByNameBot = async (
 
     res.status(200).json({ command: command.value })
   } catch (error: unknown) {
+    logger.error(`Error catch in getCommandByNameBot: ${error}`, {
+      stack: error instanceof Error ? error.stack : null,
+      path: req.originalUrl,
+      method: req.method
+    })
+
+    if (error instanceof MongooseError) {
+      await HandleError(error, res, 'Error to get command, try again')
+      return
+    }
+
     await HandleError(error, res)
   }
 }
@@ -68,6 +81,15 @@ const addCommandBot = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json(chatEdited.value)
   } catch (error: unknown) {
+    logger.error(`Error catch in addCommandBot: ${error}`, {
+      stack: error instanceof Error ? error.stack : null,
+      path: req.originalUrl,
+      method: req.method
+    })
+    if (error instanceof MongooseError) {
+      await HandleError(error, res, 'Error to add command, try again')
+      return
+    }
     await HandleError(error, res)
   }
 }
@@ -88,6 +110,17 @@ const editCommandBot = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({ chat: chat.value })
   } catch (error: unknown) {
+    logger.error(`Error catch in editCommandBot: ${error}`, {
+      stack: error instanceof Error ? error.stack : null,
+      path: req.originalUrl,
+      method: req.method
+    })
+
+    if (error instanceof MongooseError) {
+      await HandleError(error, res, 'Error to edit command, try again')
+      return
+    }
+
     await HandleError(error, res)
   }
 }
@@ -112,6 +145,17 @@ const editCommandAllBot = async (
 
     res.status(201).json(chat.value)
   } catch (error: unknown) {
+    logger.error(`Error catch in editCommandAllBot: ${error}`, {
+      stack: error instanceof Error ? error.stack : null,
+      path: req.originalUrl,
+      method: req.method
+    })
+
+    if (error instanceof MongooseError) {
+      await HandleError(error, res, 'Error to edit command, try again')
+      return
+    }
+
     await HandleError(error, res)
   }
 }
@@ -132,6 +176,17 @@ const deleteCommandBot = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json(commandDeleted.value)
   } catch (error: unknown) {
+    logger.error(`Error catch in deleteCommandBot: ${error}`, {
+      stack: error instanceof Error ? error.stack : null,
+      path: req.originalUrl,
+      method: req.method
+    })
+
+    if (error instanceof MongooseError) {
+      await HandleError(error, res, 'Error to delete command, try again')
+      return
+    }
+
     await HandleError(error, res)
   }
 }
