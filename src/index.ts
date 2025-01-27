@@ -7,6 +7,7 @@ import routerChat from '@routes/chat/chat'
 import { connectionDatabase } from '@config/connectionDatabase'
 import RouterCommand from '@routes/command/command'
 import { swaggerDocs as v1SwaggerDocs } from './docs/swagger'
+import '@config/isToEquals'
 import { logger } from '@utils/logger'
 
 const PORT = process.env.PORT || process.argv[3] || 3000

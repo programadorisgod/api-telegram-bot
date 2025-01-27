@@ -9,3 +9,4 @@
 2025-01-25 16:20:55 [31merror[39m: Error catch in deleteCommandBot: TypeError: UpdatedChat.save is not a function
 2025-01-25 16:21:31 [31merror[39m: Error catch in deleteCommandBot: ValidationError: chatId: Path `chatId` is required.
 2025-01-25 16:23:07 [31merror[39m: Error catch in deleteCommandBot: MongoServerError: E11000 duplicate key error collection: bot.chats index: chatId_1 dup key: { chatId: 23235 }
+2025-01-27 16:39:01 [31merror[39m: Error catch in getCommandByNameBot: TypeError: c.name.isToEquals is not a function

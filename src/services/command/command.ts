@@ -18,8 +18,8 @@ const getCommandByName = async (
     return Failure<Error>(chat)
   }
 
-  const command: ICommand | undefined = chat.list.find(
-    (c: ICommand) => c.name === nameCommand
+  const command: ICommand | undefined = chat.list.find((c: ICommand) =>
+    c.name.isToEquals(nameCommand)
   )
 
   if (!command) {
@@ -38,10 +38,9 @@ const addCommand = async (
 
     if (chat instanceof Error) return Failure<Error>(chat)
 
-    const findCommand: ICommand | undefined = chat.list.find(
-      (c: ICommand) => c.name === command.name
+    const findCommand: ICommand | undefined = chat.list.find((c: ICommand) =>
+      c.name.isToEquals(command.name)
     )
-
     if (findCommand !== undefined) {
       throw new CustomError(409, 'The command already exists')
     }
@@ -86,8 +85,8 @@ const editCommand = async (
     return Failure<Error>(chat)
   }
 
-  const command: ICommand | undefined = chat.list.find(
-    (command: ICommand) => command.name === name
+  const command: ICommand | undefined = chat.list.find((command: ICommand) =>
+    command.name.isToEquals(name)
   )
 
   if (!command) {
@@ -116,8 +115,8 @@ const editCommandAll = async (
     return Failure<CustomError>(new CustomError(400, 'Command not valid'))
   }
 
-  const command: ICommand | undefined = chat?.list.find(
-    (c: ICommand) => c.name === nameCommand
+  const command: ICommand | undefined = chat?.list.find((c: ICommand) =>
+    c.name.isToEquals(nameCommand)
   )
 
   if (!command) {
@@ -153,8 +152,8 @@ const deleteCommand = async (
 
   if (chat instanceof Error) return Failure<Error>(chat)
 
-  const command: ICommand | undefined = chat.list.find(
-    (command: ICommand) => command.name === name
+  const command: ICommand | undefined = chat.list.find((command: ICommand) =>
+    command.name.isToEquals(name)
   )
 
   if (!command) {
@@ -171,7 +170,7 @@ const deleteCommand = async (
   }
 
   const UpdateList: Array<ICommand> = chat.list.filter(
-    (command: ICommand) => command.name !== name
+    (command: ICommand) => !command.name.isToEquals(name)
   )
 
   chat.list = UpdateList
