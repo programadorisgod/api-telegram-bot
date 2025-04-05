@@ -6,6 +6,7 @@ import { createWriteStream, mkdirSync, existsSync } from 'node:fs'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import path from 'path'
+import os from 'node:os'
 
 // Sanitiza caracteres ilegales para nombres de archivo
 const sanitizeFilename = (name: string) => name.replace(/[\/\\?%*:|"<>]/g, '_')
@@ -34,13 +35,13 @@ export class TikTokDownloader implements Idownloader {
       const streamVideo: Readable = Readable.from(buffer)
 
       const downloadsDir = path.join(process.cwd(), 'src', 'downloads')
-      
+
       if (!existsSync(downloadsDir)) {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const filePath = path.join(downloadsDir, filename)
-      await pipeline(streamVideo, createWriteStream(filePath))
+      const outputPath = path.join(os.tmpdir(), 'downloads', filename)
+      await pipeline(streamVideo, createWriteStream(outputPath))
 
       return Success<string>(filename)
     } catch (error) {

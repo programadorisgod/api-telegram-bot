@@ -6,6 +6,7 @@ import { createWriteStream, existsSync, mkdirSync } from 'node:fs'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import path from 'node:path'
+import os from 'node:os'
 export class InstagramDownloader implements Idownloader {
   async download(
     url: string,
@@ -44,8 +45,8 @@ export class InstagramDownloader implements Idownloader {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const filePath = path.join(downloadsDir, info.filename)
-      
+      const filePath = path.join(os.tmpdir(), 'downloads', info.filename)
+
       await pipeline(stream, createWriteStream(filePath))
 
       return Success<string>(info.filename)

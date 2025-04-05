@@ -8,7 +8,7 @@ import { pipeline } from 'node:stream/promises'
 import { TwitterDL } from 'twitter-downloader'
 import { Twitter } from 'twitter-downloader/lib/types/twitter'
 import path from 'node:path'
-
+import os from 'node:os'
 // Evita caracteres inválidos en nombres de archivo
 const sanitizeFilename = (name: string) => name.replace(/[\/\\?%*:|"<>]/g, '_')
 
@@ -53,7 +53,7 @@ export class XDownloader implements Idownloader {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const filePath = path.join(downloadsDir, filename)
+      const filePath = path.join(os.tmpdir(), 'downloads', filename)
       await pipeline(stream, createWriteStream(filePath))
 
       return Success<string>(filename)
