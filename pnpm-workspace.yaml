@@ -1,4 +1,0 @@
-ignoredBuiltDependencies:
-  - '@scarf/scarf'
-  - core-js
-  - esbuild
