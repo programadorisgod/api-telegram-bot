@@ -2,10 +2,10 @@ import { format } from '@custom-types/format'
 import { Idownloader } from '@interfaces/downloader.interface'
 import { logger } from '@utils/logger'
 import { Failure, ResultResponse, Success } from '@utils/result'
-import { createWriteStream } from 'node:fs'
+import { createWriteStream, existsSync, mkdirSync } from 'node:fs'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-
+import path from 'node:path'
 export class InstagramDownloader implements Idownloader {
   async download(
     url: string,
@@ -34,14 +34,19 @@ export class InstagramDownloader implements Idownloader {
 
       const arrayBuffer: ArrayBuffer = await post.arrayBuffer()
 
-      const buffer: Buffer<ArrayBuffer> = Buffer.from(arrayBuffer)
+      const buffer = Buffer.from(arrayBuffer)
 
       const stream: Readable = Readable.from(buffer)
 
-      await pipeline(
-        stream,
-        createWriteStream(`./src/downloads/${info.filename}`)
-      )
+      const downloadsDir = path.join(process.cwd(), 'src', 'downloads')
+
+      if (!existsSync(downloadsDir)) {
+        mkdirSync(downloadsDir, { recursive: true })
+      }
+
+      const filePath = path.join(downloadsDir, info.filename)
+      
+      await pipeline(stream, createWriteStream(filePath))
 
       return Success<string>(info.filename)
     } catch (error) {
