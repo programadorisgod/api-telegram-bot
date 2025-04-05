@@ -38,6 +38,8 @@ export const postDownloader = async (
       }
     })
   } catch (error) {
+    console.log(error)
+
     logger.error(error)
     res.status(500).json({ error: 'Error interno del servidor' })
   }

@@ -34,14 +34,14 @@ export class TikTokDownloader implements Idownloader {
       const buffer: Buffer = Buffer.from(bytes)
       const streamVideo: Readable = Readable.from(buffer)
 
-      const downloadsDir = path.join(process.cwd(), 'src', 'downloads')
+      const downloadsDir = path.join(os.tmpdir(), 'downloads')
 
       if (!existsSync(downloadsDir)) {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const outputPath = path.join(os.tmpdir(), 'downloads', filename)
-      await pipeline(streamVideo, createWriteStream(outputPath))
+      const filePath = path.join(downloadsDir, filename)
+      await pipeline(streamVideo, createWriteStream(filePath))
 
       return Success<string>(filename)
     } catch (error) {

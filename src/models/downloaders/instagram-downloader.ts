@@ -39,13 +39,13 @@ export class InstagramDownloader implements Idownloader {
 
       const stream: Readable = Readable.from(buffer)
 
-      const downloadsDir = path.join(process.cwd(), 'src', 'downloads')
+      const downloadsDir = path.join(os.tmpdir(), 'downloads')
 
       if (!existsSync(downloadsDir)) {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const filePath = path.join(os.tmpdir(), 'downloads', info.filename)
+      const filePath = path.join(downloadsDir, info.filename)
 
       await pipeline(stream, createWriteStream(filePath))
 

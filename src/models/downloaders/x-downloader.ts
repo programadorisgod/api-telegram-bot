@@ -37,8 +37,10 @@ export class XDownloader implements Idownloader {
         return Failure<Error>(new Error('Error getting the stream'))
       }
 
-      const bytes: Uint8Array = await post.bytes()
-      const buffer: Buffer = Buffer.from(bytes)
+      const arrayBuffer: ArrayBuffer = await post.arrayBuffer()
+
+      const buffer = Buffer.from(arrayBuffer)
+
       const stream: Readable = Readable.from(buffer)
 
       const extension =
@@ -48,16 +50,19 @@ export class XDownloader implements Idownloader {
 
       const filename = sanitizeFilename(`${id}.${extension}`)
 
-      const downloadsDir = path.join(process.cwd(), 'src', 'downloads')
+      const downloadsDir = path.join(os.tmpdir(), 'downloads')
+
       if (!existsSync(downloadsDir)) {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const filePath = path.join(os.tmpdir(), 'downloads', filename)
+      const filePath = path.join(downloadsDir, filename)
       await pipeline(stream, createWriteStream(filePath))
 
       return Success<string>(filename)
     } catch (error) {
+      console.log(error)
+
       logger.error(error)
       return Failure<Error>(error as Error)
     }
