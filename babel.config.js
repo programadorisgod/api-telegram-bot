@@ -22,7 +22,9 @@ module.exports = {
             '@models': './src/models/',
             '@services': './src/services',
             '@utils':'./src/utils/',
-            '@interfaces':'./src/interfaces'
+            '@interfaces':'./src/interfaces',
+            '@custom-types': './src/types',
+            '@factories': './src/factories'
           }
         }
       ]

@@ -1,0 +1,52 @@
+import { format } from '@custom-types/format'
+import { Idownloader } from '@interfaces/downloader.interface'
+import { logger } from '@utils/logger'
+import { Failure, ResultResponse, Success } from '@utils/result'
+import { createWriteStream } from 'node:fs'
+import { Readable } from 'node:stream'
+import { pipeline } from 'node:stream/promises'
+
+export class InstagramDownloader implements Idownloader {
+  async download(
+    url: string,
+    _format?: format
+  ): Promise<ResultResponse<string, Error>> {
+    try {
+      const instagramDownloaderUrl = `${process.env.INSTAGRAM_DOWNLOADER_URL}?postUrl=${url}`
+      const response: Response = await fetch(instagramDownloaderUrl)
+
+      if (!response.ok) {
+        return Failure<Error>(new Error('Unable to download resource'))
+      }
+      const data = await response.json()
+
+      if (data?.status !== 'success') {
+        return Failure<Error>(new Error('Unable to download resource'))
+      }
+
+      const { data: info } = data
+
+      const post: Response = await fetch(info.videoUrl)
+
+      if (!post.body) {
+        return Failure<Error>(new Error('Error getting the stream'))
+      }
+
+      const arrayBuffer: ArrayBuffer = await post.arrayBuffer()
+
+      const buffer: Buffer<ArrayBuffer> = Buffer.from(arrayBuffer)
+
+      const stream: Readable = Readable.from(buffer)
+
+      await pipeline(
+        stream,
+        createWriteStream(`./src/downloads/${info.filename}`)
+      )
+
+      return Success<string>(info.filename)
+    } catch (error) {
+      logger.error(error)
+      return Failure<Error>(error as Error)
+    }
+  }
+}

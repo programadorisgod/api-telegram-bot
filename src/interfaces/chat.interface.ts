@@ -1,17 +1,3 @@
-/**
-  {
-    chatId: int
-    list: [
-     {
-        type: string,
-        name: string,
-        command: string,
-        description: string,
-        creator: string
-     }
-    ]
-    }
- */
 
 import { type ICommand } from '@interfaces/command.interface'
 

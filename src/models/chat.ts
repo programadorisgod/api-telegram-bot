@@ -1,21 +1,6 @@
 import { type IChatModel } from '@interfaces/chatModel.interface'
 import { Schema, model } from 'mongoose'
 
-/**
-  {
-    chatId: int
-    list: [
-         {
-            type: string,
-            name: string,
-            command: string,
-            description: string,
-            creator: string
-         }
-    ]
-    }
- */
-
 const chatSchema: Schema = new Schema({
   chatId: { type: Number, required: true, unique: true },
   list: [

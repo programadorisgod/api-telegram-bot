@@ -9,6 +9,7 @@ import RouterCommand from '@routes/command/command'
 import { swaggerDocs as v1SwaggerDocs } from './docs/swagger'
 import '@config/isToEquals'
 import { logger } from '@utils/logger'
+import routerDownloader from '@routes/downloader/downloader'
 
 const PORT = process.env.PORT || process.argv[3] || 3000
 
@@ -26,6 +27,7 @@ app.get('/', (_, res) => {
 
 app.use(routerChat)
 app.use(RouterCommand)
+app.use(routerDownloader)
 
 void connectionDatabase()
 void findPort(PORT).then((port) => {

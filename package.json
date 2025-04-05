@@ -34,7 +34,11 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.17.0",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "@distube/ytdl-core": "^4.16.6",
+    "instagram-private-api": "^1.46.1",
+    "tsx": "^4.19.3",
+    "twitter-downloader": "^1.1.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
