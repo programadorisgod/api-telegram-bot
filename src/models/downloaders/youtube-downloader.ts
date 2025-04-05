@@ -16,14 +16,11 @@ export class YoutubeDownloader implements Idownloader {
       const info: ytdl.videoInfo = await ytdl.getBasicInfo(url)
 
       const { videoDetails } = info
-      console.log('video details', videoDetails)
 
       const filename: string = `${videoDetails.title}.${format}`
 
       const filter: ytdl.Filter =
         format && format === 'mp4' ? 'audioandvideo' : 'audioonly'
-
-      console.log(filter, 'filter')
 
       const streamYtdl: Readable = ytdl(url, { filter })
 
@@ -32,17 +29,12 @@ export class YoutubeDownloader implements Idownloader {
       )
 
       await pipeline(streamYtdl, writeStream).catch((err) => {
-        console.log(err)
-
         logger.error(err)
         return Failure<Error>(new Error('File not found'))
       })
-      console.log('terminé')
 
       return Success<string>(filename)
     } catch (error) {
-      console.log(error)
-
       logger.error(error)
       return Failure<Error>(error as Error)
     }

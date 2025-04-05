@@ -8,7 +8,6 @@ export const downloader = async (
   format?: format
 ): Promise<ResultResponse<string, Error>> => {
   const factory = factoryProvider(url)
-  console.log(factory, 'factory')
 
   if (!factory) {
     return Failure<CustomError>(

@@ -1,8 +1,10 @@
 import { format } from '@custom-types/format'
 import { downloader } from '@services/downloader/downloader'
 import { HandleError } from '@utils/httpError'
+import { logger } from '@utils/logger'
 import { ResultResponse } from '@utils/result'
 import { Request, Response } from 'express'
+import { unlink } from 'fs'
 import path from 'path'
 
 export const postDownloader = async (
@@ -26,7 +28,14 @@ export const postDownloader = async (
       'src/downloads/',
       postDownloaded.value
     )
-    console.log(filePath)
-    res.status(200).sendFile(filePath)
+    res.status(200).sendFile(filePath, (err) => {
+      if (err) {
+        logger.error(err)
+      } else {
+        unlink(filePath, (unlinkErr) => {
+          if (unlinkErr) logger.error(unlinkErr)
+        })
+      }
+    })
   } catch (error) {}
 }
