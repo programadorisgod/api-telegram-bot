@@ -30,7 +30,7 @@ export class TikTokDownloader implements Idownloader {
         return Failure<Error>(new Error('Error getting stream video'))
       }
 
-      const bytes: Uint8Array<ArrayBufferLike> = await videResponse.bytes()
+      const bytes: ArrayBuffer = await videResponse.arrayBuffer()
       const buffer: Buffer = Buffer.from(bytes)
       const streamVideo: Readable = Readable.from(buffer)
 
