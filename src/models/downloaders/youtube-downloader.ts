@@ -3,9 +3,16 @@ import ytdl from '@distube/ytdl-core'
 import { Idownloader } from '@interfaces/downloader.interface'
 import { logger } from '@utils/logger'
 import { Failure, ResultResponse, Success } from '@utils/result'
-import { createWriteStream, type WriteStream } from 'node:fs'
+import {
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  type WriteStream
+} from 'node:fs'
+import path from 'node:path'
 import type { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
+import os from 'node:os'
 
 export class YoutubeDownloader implements Idownloader {
   async download(
@@ -24,9 +31,15 @@ export class YoutubeDownloader implements Idownloader {
 
       const streamYtdl: Readable = ytdl(url, { filter })
 
-      const writeStream: WriteStream = createWriteStream(
-        `./src/downloads/${filename}`
-      )
+      const downloadsDir = path.join(os.tmpdir(), 'downloads')
+
+      if (!existsSync(downloadsDir)) {
+        mkdirSync(downloadsDir, { recursive: true })
+      }
+
+      const filePath = path.join(downloadsDir, filename)
+
+      const writeStream: WriteStream = createWriteStream(filePath)
 
       await pipeline(streamYtdl, writeStream).catch((err) => {
         logger.error(err)
