@@ -1,17 +1,10 @@
 import { format } from '@custom-types/format'
-import ytdl from '@distube/ytdl-core'
+import { chromium } from '@playwright/test'
 import { Idownloader } from '@interfaces/downloader.interface'
 import { logger } from '@utils/logger'
 import { Failure, ResultResponse, Success } from '@utils/result'
-import {
-  createWriteStream,
-  existsSync,
-  mkdirSync,
-  type WriteStream
-} from 'node:fs'
+import { existsSync, mkdirSync } from 'node:fs'
 import path from 'node:path'
-import type { Readable } from 'node:stream'
-import { pipeline } from 'node:stream/promises'
 import os from 'node:os'
 
 export class YoutubeDownloader implements Idownloader {
@@ -20,16 +13,42 @@ export class YoutubeDownloader implements Idownloader {
     format?: format
   ): Promise<ResultResponse<string, Error>> {
     try {
-      const info: ytdl.videoInfo = await ytdl.getBasicInfo(url)
+      const browser = await chromium.launch({ headless: true })
+      const context = await browser.newContext({ acceptDownloads: true })
+      const page = await context.newPage()
 
-      const { videoDetails } = info
+      await page.goto('https://y2mate.net.co/es/1')
 
-      const filename: string = `${videoDetails.title}.${format}`
+      await page.getByPlaceholder('Search or paste link here...').fill(url)
 
-      const filter: ytdl.Filter =
-        format && format === 'mp4' ? 'audioandvideo' : 'audioonly'
+      await page.getByRole('button', { name: 'Start' }).click()
+      await page.locator('#downloadSection').waitFor()
 
-      const streamYtdl: Readable = ytdl(url, { filter })
+      const options = await page.locator('#quality option').all()
+
+      let maxQuality: number = 0
+      for (const option of options) {
+        const value = await option.getAttribute('value')
+
+        const quality = Number(value?.trim())
+
+        if (format === 'mp3' && quality === 128) {
+          maxQuality = quality
+          break
+        }
+
+        if (!Number.isNaN(quality) && quality > maxQuality) {
+          maxQuality = quality
+        }
+      }
+
+      await page.locator('#quality').selectOption(String(maxQuality))
+      await page.getByText('Get Link').click()
+
+      const [download] = await Promise.all([
+        page.waitForEvent('download'),
+        page.locator('div.download.btn').click()
+      ])
 
       const downloadsDir = path.join(os.tmpdir(), 'downloads')
 
@@ -37,16 +56,14 @@ export class YoutubeDownloader implements Idownloader {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const filePath = path.join(downloadsDir, filename)
+      const fileName = download.suggestedFilename()
+      const filePath = path.join(downloadsDir, fileName)
 
-      const writeStream: WriteStream = createWriteStream(filePath)
+      await download.saveAs(filePath)
 
-      await pipeline(streamYtdl, writeStream).catch((err) => {
-        logger.error(err)
-        return Failure<Error>(new Error('File not found'))
-      })
+      await browser.close()
 
-      return Success<string>(filename)
+      return Success<string>(fileName)
     } catch (error) {
       logger.error(error)
       return Failure<Error>(error as Error)
