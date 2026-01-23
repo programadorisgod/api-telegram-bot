@@ -1,31 +1,28 @@
 ARG ALPINE_VERSION=3.18
-
-FROM node:20-alpine${ALPINE_VERSION} as base
 ARG DIR=/project
-WORKDIR ${DIR}
 
-COPY package*.json .
-RUN npm ci --omit=dev
-
-FROM base as build
+FROM mcr.microsoft.com/playwright:v1.58.0-noble AS build
 # Quita corepack y usa npm para instalar pnpm
 RUN npm install -g pnpm@latest
-
+ARG DIR
 WORKDIR ${DIR}
+
 COPY . .
 
-RUN pnpm install
-RUN pnpm run build
+RUN pnpm install \
+    && pnpm run build
 
-FROM alpine:${ALPINE_VERSION} as release
+FROM mcr.microsoft.com/playwright:v1.58.0-noble as release
+ARG DIR
 WORKDIR ${DIR}
-RUN apk add --no-cache libstdc++ dumb-init \
-    && addgroup -g 1000 node && adduser -u 1000 -G node -s /bin/sh -D node \
-    && chown node:node ./
 
-COPY --from=base /usr/local/bin/node /usr/local/bin/node
+RUN apt-get update \
+    && apt-get install -y dumb-init \
+    && rm -rf /var/lib/apt/lists/*
 
-USER node
+
+
+USER pwuser
 
 ENV DB_URI=
 
