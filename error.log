@@ -1,2 +1,21 @@
 2025-04-05 16:09:29 [31merror[39m: Archivo no encontrado: C:\Users\Camidev\AppData\Local\Temp\downloads\ig-downloader-1743887368.mp4
 2025-04-06 15:22:24 [31merror[39m: Archivo no encontrado: C:\Users\Camidev\AppData\Local\Temp\downloads\el MEJOR libro de ALGORÍTMICA.undefined
+2026-01-23 16:50:37 [31merror[39m: locator.fill: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByPlaceholder('Search or paste link here...')[22m
+
+2026-01-23 16:51:16 [31merror[39m: locator.fill: Target page, context or browser has been closed
+Call log:
+[2m  - waiting for getByPlaceholder('Search or paste link here...')[22m
+
+2026-01-23 16:51:37 [31merror[39m: locator.fill: Target page, context or browser has been closed
+Call log:
+[2m  - waiting for getByPlaceholder('Search or paste link here...')[22m
+
+2026-01-23 16:52:06 [31merror[39m: locator.fill: Target page, context or browser has been closed
+Call log:
+[2m  - waiting for getByPlaceholder('Search or paste link here...')[22m
+
+2026-01-23 16:52:45 [31merror[39m: Archivo no encontrado: /tmp/downloads/como-se-hace-la-fibra-de-carbono-asi-se-fabrica-el-material-mas-fuerte-y-ligero-del-planeta-1080-ytshorts.savetube.me.mp4
+2026-01-23 16:52:45 [31merror[39m: Uncaught Exception: Cannot set headers after they are sent to the client
+2026-01-23 16:57:45 [31merror[39m: Archivo no encontrado: /tmp/downloads/como-se-hace-la-fibra-de-carbono-asi-se-fabrica-el-material-mas-fuerte-y-ligero-del-planeta-1080-ytshorts.savetube.me.mp4

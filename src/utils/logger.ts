@@ -7,7 +7,7 @@ const devFormat = printf(({ level, message, timestamp }) => {
 })
 
 const isDevelopment = process.env.NODE_ENV === 'development'
-const fileName = isDevelopment ? `error.log` : `/build/error.log`
+const fileName = isDevelopment ? `error.log` : `/tmp/error.log`
 
 export const logger = createLogger({
   level: isDevelopment ? 'debug' : 'info',
