@@ -13,7 +13,9 @@ export class YoutubeDownloader implements Idownloader {
     format?: format
   ): Promise<ResultResponse<string, Error>> {
     try {
-      const browser = await chromium.launch({ headless: true })
+      const FORMAT_MP3 = 'mp3'
+      const AUDIO_QUALITY = 128
+      const browser = await chromium.launch({ headless: false })
       const context = await browser.newContext({ acceptDownloads: true })
       const page = await context.newPage()
 
@@ -32,7 +34,7 @@ export class YoutubeDownloader implements Idownloader {
 
         const quality = Number(value?.trim())
 
-        if (format === 'mp3' && quality === 128) {
+        if (format === FORMAT_MP3 && quality === AUDIO_QUALITY) {
           maxQuality = quality
           break
         }
