@@ -15,7 +15,7 @@ export class YoutubeDownloader implements Idownloader {
     try {
       const FORMAT_MP3 = 'mp3'
       const AUDIO_QUALITY = 128
-      const browser = await chromium.launch({ headless: false })
+      const browser = await chromium.launch({ headless: true })
       const context = await browser.newContext({ acceptDownloads: true })
       const page = await context.newPage()
 
