@@ -29,6 +29,6 @@ ENV DB_URI=
 COPY --from=build /project/node_modules ./node_modules
 COPY --from=build /project/build ./build
 
-EXPOSE $PORT
+EXPOSE 3000
 
 CMD ["dumb-init", "node", "build/index.js"]

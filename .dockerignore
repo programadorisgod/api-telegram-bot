@@ -1,5 +1,13 @@
 build
 node_modules
+downloads
+.git
+.github
+coverage
+playwright-report
+test-results
+tests
+*.log
 .vscode
 .eslintrc.js
 .prettierrc

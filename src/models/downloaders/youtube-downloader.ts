@@ -1,5 +1,5 @@
 import { format } from '@custom-types/format'
-import { chromium } from '@playwright/test'
+import { chromium } from 'playwright'
 import { Idownloader } from '@interfaces/downloader.interface'
 import { logger } from '@utils/logger'
 import { Failure, ResultResponse, Success } from '@utils/result'
