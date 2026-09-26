@@ -1,11 +1,14 @@
 import { format } from '@custom-types/format'
-import { chromium } from 'playwright'
 import { Idownloader } from '@interfaces/downloader.interface'
 import { logger } from '@utils/logger'
 import { Failure, ResultResponse, Success } from '@utils/result'
-import { existsSync, mkdirSync } from 'node:fs'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { existsSync, mkdirSync, promises as fsPromises } from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
+
+const execFileAsync = promisify(execFile)
 
 export class YoutubeDownloader implements Idownloader {
   async download(
@@ -13,59 +16,68 @@ export class YoutubeDownloader implements Idownloader {
     format?: format
   ): Promise<ResultResponse<string, Error>> {
     try {
-      const FORMAT_MP3 = 'mp3'
-      const AUDIO_QUALITY = 128
-      const browser = await chromium.launch({ headless: true })
-      const context = await browser.newContext({ acceptDownloads: true })
-      const page = await context.newPage()
-
-      await page.goto('https://y2mate.net.co/es/1')
-
-      await page.getByPlaceholder('Search or paste link here...').fill(url)
-
-      await page.getByRole('button', { name: 'Start' }).click()
-      await page.locator('#downloadSection').waitFor()
-
-      const options = await page.locator('#quality option').all()
-
-      let maxQuality: number = 0
-      for (const option of options) {
-        const value = await option.getAttribute('value')
-
-        const quality = Number(value?.trim())
-
-        if (format === FORMAT_MP3 && quality === AUDIO_QUALITY) {
-          maxQuality = quality
-          break
-        }
-
-        if (!Number.isNaN(quality) && quality > maxQuality) {
-          maxQuality = quality
-        }
-      }
-
-      await page.locator('#quality').selectOption(String(maxQuality))
-      await page.getByText('Get Link').click()
-
-      const [download] = await Promise.all([
-        page.waitForEvent('download'),
-        page.locator('div.download.btn').click()
-      ])
-
+      const isMp3 = format === 'mp3'
       const downloadsDir = path.join(os.tmpdir(), 'downloads')
 
       if (!existsSync(downloadsDir)) {
         mkdirSync(downloadsDir, { recursive: true })
       }
 
-      const fileName = download.suggestedFilename()
-      const filePath = path.join(downloadsDir, fileName)
+      const filePrefix = `yt_${Date.now()}`
+      const extraPaths = [
+        path.join(os.homedir(), '.local', 'bin'),
+        path.join(os.homedir(), '.deno', 'bin'),
+        '/usr/local/bin',
+        '/usr/bin'
+      ]
+      const env = {
+        ...process.env,
+        PATH: `${extraPaths.join(':')}:${process.env.PATH ?? ''}`
+      }
 
-      await download.saveAs(filePath)
+      const args = [
+        '--no-playlist',
+        '-P',
+        downloadsDir,
+        '-o',
+        `${filePrefix}.%(ext)s`
+      ]
 
-      await browser.close()
+      if (isMp3) {
+        args.push('-x', '--audio-format', 'mp3')
+      } else {
+        args.push('-f', 'bv*+ba/b', '--merge-output-format', 'mp4')
+      }
 
-      return Success<string>(fileName)
+      args.push(url)
+
+      await execFileAsync('yt-dlp', args, { env })
+
+      const files = await fsPromises.readdir(downloadsDir)
+      const matchedFiles = files.filter((file) => file.startsWith(filePrefix))
+
+      if (matchedFiles.length === 0) {
+        return Failure<Error>(
+          new Error('No media file found after downloading with yt-dlp')
+        )
+      }
+
+      const expectedExt = isMp3 ? '.mp3' : '.mp4'
+      const targetFile =
+        matchedFiles.find((file) => file.endsWith(expectedExt)) ??
+        matchedFiles[0]
+
+      for (const file of matchedFiles) {
+        if (file !== targetFile) {
+          try {
+            await fsPromises.unlink(path.join(downloadsDir, file))
+          } catch (cleanError) {
+            logger.warn(`Failed to clean residual file ${file}:`, cleanError)
+          }
+        }
+      }
+
+      return Success<string>(targetFile)
     } catch (error) {
       logger.error(error)
       return Failure<Error>(error as Error)

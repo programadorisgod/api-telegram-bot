@@ -22,7 +22,7 @@ export class TikTokDownloader implements Idownloader {
       const json = await response.json()
 
       const videoUrl = json?.data?.play
-      const rawTitle = json?.data?.title || 'video'
+      const rawTitle = (json?.data?.title || 'video').slice(0, 200)
       const filename = `${sanitizeFilename(rawTitle)}.mp4`
 
       const videResponse: Response = await fetch(videoUrl)
