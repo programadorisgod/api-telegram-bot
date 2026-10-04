@@ -21,13 +21,18 @@ export class TikTokDownloader implements Idownloader {
       const response: Response = await fetch(tiktokUrl)
       const json = await response.json()
 
-      const videoUrl = json?.data?.play
-      const rawTitle = (json?.data?.title || 'video').slice(0, 200)
-      const filename = `${sanitizeFilename(rawTitle)}.mp4`
+      if (!response.ok || json?.code !== 0 || (!json?.data?.play && !json?.data?.wmplay)) {
+        const errorMsg = json?.msg || 'No se pudo obtener el video de TikTok'
+        return Failure<Error>(new Error(errorMsg))
+      }
+
+      const videoUrl = json.data.play || json.data.wmplay
+      const id = json?.data?.id ?? Date.now().toString()
+      const filename = `tiktok_${id}_${Date.now()}.mp4`
 
       const videResponse: Response = await fetch(videoUrl)
-      if (!videResponse.body) {
-        return Failure<Error>(new Error('Error getting stream video'))
+      if (!videResponse.ok || !videResponse.body) {
+        return Failure<Error>(new Error(`Error descargando el archivo de TikTok (HTTP ${videResponse.status})`))
       }
 
       const bytes: ArrayBuffer = await videResponse.arrayBuffer()

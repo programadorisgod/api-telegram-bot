@@ -177,7 +177,7 @@ export class XDownloader implements Idownloader {
       const buffer = Buffer.from(arrayBuffer)
       const stream: Readable = Readable.from(buffer)
 
-      const filename = sanitizeFilename(`${id}.${extension}`)
+      const filename = sanitizeFilename(`x_${id}_${Date.now()}.${extension}`)
       const downloadsDir = path.join(os.tmpdir(), 'downloads')
 
       if (!existsSync(downloadsDir)) {

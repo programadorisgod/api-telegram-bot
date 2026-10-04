@@ -29,6 +29,11 @@ const HandleError = async (
     return
   }
 
+  if (error instanceof Error) {
+    res.status(400).json({ error: message ? message : error.message })
+    return
+  }
+
   res
     .status(500)
     .json({ error: `${message ? message : 'Internal server error'}` })
