@@ -37,6 +37,8 @@ export class YoutubeDownloader implements Idownloader {
 
       const args = [
         '--no-playlist',
+        '--extractor-args',
+        'youtube:player_client=android,web',
         '-P',
         downloadsDir,
         '-o',
